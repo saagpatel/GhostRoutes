@@ -93,4 +93,45 @@ actor LocationStore {
             try Visit.fetchCount(db)
         }
     }
+
+    // MARK: - Chunked Insert (for progress reporting)
+
+    func insertBatchChunked(
+        _ records: [LocationRecord],
+        chunkSize: Int = 500,
+        onProgress: @Sendable (Double) -> Void
+    ) async throws {
+        let total = records.count
+        var inserted = 0
+
+        for chunkStart in stride(from: 0, to: total, by: chunkSize) {
+            let chunkEnd = min(chunkStart + chunkSize, total)
+            let chunk = Array(records[chunkStart..<chunkEnd])
+
+            try await database.writer.write { db in
+                for var record in chunk {
+                    try record.insert(db)
+                }
+            }
+
+            inserted += chunk.count
+            onProgress(Double(inserted) / Double(total))
+        }
+
+        Logger.database.info("Chunked insert: \(total) records in \(total / chunkSize + 1) chunks")
+    }
+
+    // MARK: - Deletion
+
+    func deleteAllRecords() async throws {
+        _ = try await database.writer.write { db in
+            try LocationRecord.deleteAll(db)
+        }
+    }
+
+    func deleteAllVisits() async throws {
+        _ = try await database.writer.write { db in
+            try Visit.deleteAll(db)
+        }
+    }
 }

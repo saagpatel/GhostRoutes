@@ -162,6 +162,19 @@ final class AppDatabase: Sendable {
 
         return try AppDatabase(pool)
     }
+
+    /// Delete all data and recreate tables (for "Delete All Data" in settings).
+    func resetAllData() async throws {
+        try await writer.write { db in
+            try db.drop(table: "life_chapters")
+            try db.drop(table: "ghost_locations")
+            try db.drop(table: "visits")
+            try db.drop(table: "location_records")
+            try db.drop(table: "place_cache")
+        }
+        try self.migrator.migrate(writer)
+        Logger.database.info("All data deleted and tables recreated")
+    }
 }
 
 // MARK: - SwiftUI Environment

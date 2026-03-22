@@ -89,4 +89,25 @@ actor GhostStore {
             try PlaceCache.filter(Column("cache_key") == key).fetchOne(db)
         }
     }
+
+    // MARK: - Update
+
+    func updateDisplayName(ghostId: Int64, name: String) async throws {
+        try await database.writer.write { db in
+            if var ghost = try GhostLocation.fetchOne(db, id: ghostId) {
+                ghost.cachedDisplayName = name
+                try ghost.update(db)
+            }
+        }
+    }
+
+    // MARK: - Deletion
+
+    func deleteAll() async throws {
+        try await database.writer.write { db in
+            try GhostLocation.deleteAll(db)
+            try LifeChapter.deleteAll(db)
+            try PlaceCache.deleteAll(db)
+        }
+    }
 }
