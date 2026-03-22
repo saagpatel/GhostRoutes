@@ -6,7 +6,7 @@ A privacy-first iOS app that ingests Apple CLVisit API data and Google Location 
 ## Tech Stack
 - Language: Swift 5.9+ (structured concurrency — `async/await`, `actor`)
 - UI: SwiftUI (iOS 17+ minimum — required for MapKit `MapPolyline` overlay support)
-- Database: SQLite via GRDB.swift 6.x — type-safe ORM, WAL mode
+- Database: SQLite via GRDB.swift 7.x — type-safe ORM, WAL mode, Swift 6 strict concurrency
 - Maps: MapKit (SwiftUI) — `Map` view with `MapPolyline` overlays
 - Notifications: UserNotifications framework (local only, no push)
 - Image Export: `ImageRenderer` (SwiftUI, iOS 16+)
