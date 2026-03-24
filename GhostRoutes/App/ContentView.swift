@@ -11,6 +11,16 @@ struct ContentView: View {
                         Label("Map", systemImage: "map.fill")
                     }
 
+                ComparisonView()
+                    .tabItem {
+                        Label("Compare", systemImage: "rectangle.split.2x1")
+                    }
+
+                GhostInboxView()
+                    .tabItem {
+                        Label("Inbox", systemImage: "bell.fill")
+                    }
+
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gearshape.fill")

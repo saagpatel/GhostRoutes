@@ -12,6 +12,7 @@ final class MapViewModel {
     var routeSegments: [RouteSegment] = []
     var visibleGhosts: [GhostLocation] = []
     var visibleRoutes: [RouteSegment] = []
+    var chapters: [LifeChapter] = []
     var isLoading = false
 
     struct RouteSegment: Identifiable, Sendable {
@@ -36,6 +37,15 @@ final class MapViewModel {
                     ghosts: ghostLocations
                 )
             }.value
+
+            // Detect chapters
+            let allVisits = try await locationStore.fetchAllVisits()
+            chapters = await Task.detached {
+                ChapterDetector.detect(visits: allVisits)
+            }.value
+            if !chapters.isEmpty {
+                try await ghostStore.replaceAllChapters(chapters)
+            }
 
             // Show all data
             visibleGhosts = ghostLocations
@@ -81,7 +91,7 @@ final class MapViewModel {
 
     // MARK: - Route Segment Construction
 
-    private nonisolated static func buildRouteSegments(
+    nonisolated static func buildRouteSegments(
         from records: [LocationRecord],
         ghosts: [GhostLocation]
     ) -> [RouteSegment] {
@@ -140,14 +150,14 @@ final class MapViewModel {
         return segments
     }
 
-    private nonisolated static func isNearGhost(
+    nonisolated static func isNearGhost(
         segment: [CLLocationCoordinate2D],
         ghosts: [GhostLocation]
     ) -> Bool {
         nearestGhostScore(segment: segment, ghosts: ghosts) != nil
     }
 
-    private nonisolated static func nearestGhostScore(
+    nonisolated static func nearestGhostScore(
         segment: [CLLocationCoordinate2D],
         ghosts: [GhostLocation]
     ) -> Double? {

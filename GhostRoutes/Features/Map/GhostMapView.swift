@@ -67,9 +67,20 @@ struct GhostMapView: View {
                     }
                 }
 
-                // Animation controls
-                if !viewModel.routeSegments.isEmpty {
-                    AnimationControlsView(state: animationState)
+                // Chapters scrubber at top
+                VStack {
+                    ChaptersView(chapters: viewModel.chapters) { chapter in
+                        navigateToChapter(chapter)
+                    }
+                    Spacer()
+                }
+
+                // Animation controls at bottom
+                VStack {
+                    Spacer()
+                    if !viewModel.routeSegments.isEmpty {
+                        AnimationControlsView(state: animationState)
+                    }
                 }
 
                 // Loading overlay
@@ -127,6 +138,29 @@ struct GhostMapView: View {
             return viewModel.visibleSegmentsForAnimation(cutoff: cutoff)
         }
         return viewModel.visibleRoutes
+    }
+
+    // MARK: - Chapters
+
+    private func navigateToChapter(_ chapter: LifeChapter) {
+        guard let latMin = chapter.boundingLatMin,
+              let latMax = chapter.boundingLatMax,
+              let lngMin = chapter.boundingLngMin,
+              let lngMax = chapter.boundingLngMax
+        else { return }
+
+        withAnimation(.easeInOut(duration: 0.5)) {
+            viewModel.cameraPosition = .region(MKCoordinateRegion(
+                center: CLLocationCoordinate2D(
+                    latitude: (latMin + latMax) / 2,
+                    longitude: (lngMin + lngMax) / 2
+                ),
+                span: MKCoordinateSpan(
+                    latitudeDelta: (latMax - latMin) * 1.3,
+                    longitudeDelta: (lngMax - lngMin) * 1.3
+                )
+            ))
+        }
     }
 
     // MARK: - Export

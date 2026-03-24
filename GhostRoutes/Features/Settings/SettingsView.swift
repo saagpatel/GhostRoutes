@@ -29,6 +29,22 @@ struct SettingsView: View {
                     LabeledContent("Ghost locations", value: "\(ghostCount)")
                 }
 
+                // MARK: - Notifications
+                Section("Notifications") {
+                    Toggle("Mindful Mode", isOn: mindfulModeBinding)
+
+                    if AlertsManager.isMindfulModeActive {
+                        let pauseUntil = Date(
+                            timeIntervalSince1970: UserDefaults.standard.double(
+                                forKey: "mindfulModePauseUntil"
+                            )
+                        )
+                        Text("Ghost alerts paused until \(pauseUntil, format: .dateTime)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
                 // MARK: - Danger Zone
                 Section {
                     Button(role: .destructive) {
@@ -81,6 +97,23 @@ struct SettingsView: View {
                 Text("This will permanently delete all location records, visits, and ghost locations. This cannot be undone.")
             }
         }
+    }
+
+    private var mindfulModeBinding: Binding<Bool> {
+        Binding(
+            get: { AlertsManager.isMindfulModeActive },
+            set: { enabled in
+                if enabled {
+                    let thirtyDaysFromNow = Date().addingTimeInterval(30 * 86400)
+                    UserDefaults.standard.set(
+                        thirtyDaysFromNow.timeIntervalSince1970,
+                        forKey: "mindfulModePauseUntil"
+                    )
+                } else {
+                    UserDefaults.standard.removeObject(forKey: "mindfulModePauseUntil")
+                }
+            }
+        )
     }
 
     private func refreshCounts() async {

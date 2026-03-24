@@ -90,6 +90,32 @@ actor GhostStore {
         }
     }
 
+    // MARK: - Alerts
+
+    func fetchAlertable() async throws -> [GhostLocation] {
+        let thirtyDaysAgo = Date().addingTimeInterval(-30 * 86400)
+        return try await database.writer.read { db in
+            try GhostLocation
+                .filter(GhostLocation.Columns.ghostlinessScore >= GhostThresholds.ghostlinessAlertThreshold)
+                .filter(GhostLocation.Columns.isDismissed == false)
+                .filter(
+                    GhostLocation.Columns.alertSentAt == nil
+                        || GhostLocation.Columns.alertSentAt < thirtyDaysAgo
+                )
+                .order(GhostLocation.Columns.ghostlinessScore.desc)
+                .fetchAll(db)
+        }
+    }
+
+    func markAlertSent(ghostId: Int64) async throws {
+        try await database.writer.write { db in
+            if var ghost = try GhostLocation.fetchOne(db, id: ghostId) {
+                ghost.alertSentAt = Date()
+                try ghost.update(db)
+            }
+        }
+    }
+
     // MARK: - Update
 
     func updateDisplayName(ghostId: Int64, name: String) async throws {
