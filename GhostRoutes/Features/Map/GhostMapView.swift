@@ -176,14 +176,18 @@ struct GhostMapView: View {
 
             let lats = allCoords.map(\.latitude)
             let lngs = allCoords.map(\.longitude)
+            guard let minLat = lats.min(), let maxLat = lats.max(),
+                  let minLng = lngs.min(), let maxLng = lngs.max()
+            else { return }
+
             let region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(
-                    latitude: (lats.min()! + lats.max()!) / 2,
-                    longitude: (lngs.min()! + lngs.max()!) / 2
+                    latitude: (minLat + maxLat) / 2,
+                    longitude: (minLng + maxLng) / 2
                 ),
                 span: MKCoordinateSpan(
-                    latitudeDelta: (lats.max()! - lats.min()!) * 1.3,
-                    longitudeDelta: (lngs.max()! - lngs.min()!) * 1.3
+                    latitudeDelta: (maxLat - minLat) * 1.3,
+                    longitudeDelta: (maxLng - minLng) * 1.3
                 )
             )
 

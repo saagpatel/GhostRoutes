@@ -21,8 +21,8 @@ A privacy-first iOS app that ingests Apple CLVisit API data and Google Location 
 - No network calls except `CLGeocoder` (Apple on-device, iOS 17+)
 
 ## Current Phase
-**Phase 0: Foundation**
-See IMPLEMENTATION-ROADMAP.md for full phase details, acceptance criteria, and verification checklists.
+**All phases complete (v1.0.0) — App Store ready**
+Phases 0-3 implemented, Phase 4 (App Store Prep) finalized. 40+ tests, 0 warnings, clean build.
 
 ## Key Decisions
 | Decision | Choice | Why |
