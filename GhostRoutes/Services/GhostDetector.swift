@@ -56,7 +56,7 @@ struct GhostDetector: Sendable {
     private static func gridKey(lat: Double, lng: Double) -> String {
         let latKey = Int(floor(lat * 2000))
         let lngKey = Int(floor(lng * 2000))
-        return "\(latKey)_\(lngKey)"
+        return "\(latKey),\(lngKey)"
     }
 
     private static func bucketVisits(_ visits: [Visit]) -> [String: [Visit]] {
@@ -71,7 +71,7 @@ struct GhostDetector: Sendable {
     // MARK: - Phase 2: Cluster Merging
 
     private static func neighborKeys(for key: String) -> [String] {
-        let parts = key.split(separator: "_")
+        let parts = key.split(separator: ",")
         guard parts.count == 2,
               let latKey = Int(parts[0]),
               let lngKey = Int(parts[1])
@@ -80,7 +80,7 @@ struct GhostDetector: Sendable {
         var keys: [String] = []
         for dLat in -1...1 {
             for dLng in -1...1 {
-                keys.append("\(latKey + dLat)_\(lngKey + dLng)")
+                keys.append("\(latKey + dLat),\(lngKey + dLng)")
             }
         }
         return keys

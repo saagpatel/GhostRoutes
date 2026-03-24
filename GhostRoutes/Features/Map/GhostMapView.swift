@@ -4,7 +4,6 @@ import SwiftUI
 struct GhostMapView: View {
     @State private var viewModel = MapViewModel()
     @State private var animationState = AnimationState()
-    @State private var isAnimating = false
     @State private var shareImage: UIImage?
     @State private var showShareSheet = false
     @Environment(\.appDatabase) private var appDatabase

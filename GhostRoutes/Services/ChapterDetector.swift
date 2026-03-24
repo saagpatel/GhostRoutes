@@ -80,7 +80,7 @@ struct ChapterDetector: Sendable {
                 to: end ?? latest
             ).day ?? 0
 
-            if chapterDays < minChapterDays && chapters.count > 0 {
+            if chapterDays < minChapterDays && !chapters.isEmpty {
                 // Merge short chapter into previous
                 continue
             }

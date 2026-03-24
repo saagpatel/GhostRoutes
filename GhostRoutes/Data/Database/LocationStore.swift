@@ -124,13 +124,13 @@ actor LocationStore {
     // MARK: - Deletion
 
     func deleteAllRecords() async throws {
-        _ = try await database.writer.write { db in
+        _ = try await database.writer.write { db -> Int in
             try LocationRecord.deleteAll(db)
         }
     }
 
     func deleteAllVisits() async throws {
-        _ = try await database.writer.write { db in
+        _ = try await database.writer.write { db -> Int in
             try Visit.deleteAll(db)
         }
     }

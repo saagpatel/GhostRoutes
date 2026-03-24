@@ -42,7 +42,7 @@ private struct TakeoutFile: Decodable, Sendable {
     let locations: [TakeoutLocation]
 }
 
-struct TakeoutLocation: Decodable, Sendable {
+private struct TakeoutLocation: Decodable, Sendable {
     let latitudeE7: Int?
     let longitudeE7: Int?
     let timestamp: String?

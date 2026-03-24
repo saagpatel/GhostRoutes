@@ -1,3 +1,4 @@
+import os.log
 import SwiftUI
 
 struct SettingsView: View {
@@ -126,7 +127,7 @@ struct SettingsView: View {
             visitCount = try await locationStore.visitCount()
             ghostCount = try await ghostStore.fetchAll().count
         } catch {
-            // Counts stay at 0
+            Logger.settings.error("Failed to refresh counts: \(error)")
         }
     }
 
@@ -134,9 +135,14 @@ struct SettingsView: View {
         guard let db = appDatabase else { return }
         do {
             try await db.resetAllData()
+            AlertsManager.cancelAllAlerts()
             await refreshCounts()
         } catch {
-            // Log handled by AppDatabase
+            Logger.settings.error("Failed to delete all data: \(error)")
         }
     }
+}
+
+extension Logger {
+    static let settings = Logger(subsystem: "com.ghostroutes.app", category: "settings")
 }

@@ -1,3 +1,4 @@
+import os.log
 import SwiftUI
 
 struct GhostInboxView: View {
@@ -41,6 +42,7 @@ struct GhostInboxView: View {
         do {
             ghosts = try await store.fetchUndismissed()
         } catch {
+            Logger.ghostInbox.error("Failed to load ghosts: \(error)")
             ghosts = []
         }
     }
@@ -52,7 +54,7 @@ struct GhostInboxView: View {
             try await store.dismiss(ghostId)
             ghosts.removeAll { $0.id == ghostId }
         } catch {
-            // Dismiss failed silently
+            Logger.ghostInbox.error("Failed to dismiss ghost: \(error)")
         }
     }
 }
@@ -107,4 +109,8 @@ struct GhostInboxRow: View {
     private var ghostOpacity: Double {
         min(0.15 + ghost.ghostlinessScore * 0.05, 0.65)
     }
+}
+
+extension Logger {
+    static let ghostInbox = Logger(subsystem: "com.ghostroutes.app", category: "ghostInbox")
 }

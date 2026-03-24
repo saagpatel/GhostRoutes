@@ -44,7 +44,7 @@ final class AnimationState: NSObject {
         progress = value.clamped(to: 0...1)
     }
 
-    @objc private func tick() {
+    @MainActor @objc private func tick() {
         let elapsed = CACurrentMediaTime() - playStartTime
         let newProgress = playStartProgress + elapsed / duration
         if newProgress >= 1.0 {
