@@ -19,6 +19,7 @@ final class MapViewModel {
         let coordinates: [CLLocationCoordinate2D]
         let isGhost: Bool
         let ghostlinessScore: Double?
+        let startDate: Date
     }
 
     func loadData(locationStore: LocationStore, ghostStore: GhostStore) async {
@@ -67,7 +68,8 @@ final class MapViewModel {
             return RouteSegment(
                 coordinates: simplified,
                 isGhost: segment.isGhost,
-                ghostlinessScore: segment.ghostlinessScore
+                ghostlinessScore: segment.ghostlinessScore,
+                startDate: segment.startDate
             )
         }
 
@@ -90,6 +92,7 @@ final class MapViewModel {
         var currentCoords: [CLLocationCoordinate2D] = [
             CLLocationCoordinate2D(latitude: sorted[0].latitude, longitude: sorted[0].longitude)
         ]
+        var segmentStartIndex = 0
 
         for i in 1..<sorted.count {
             let record = sorted[i]
@@ -110,10 +113,12 @@ final class MapViewModel {
                     segments.append(RouteSegment(
                         coordinates: simplified,
                         isGhost: isGhost,
-                        ghostlinessScore: score
+                        ghostlinessScore: score,
+                        startDate: sorted[segmentStartIndex].timestamp
                     ))
                 }
                 currentCoords = [coord]
+                segmentStartIndex = i
             } else {
                 currentCoords.append(coord)
             }
@@ -127,7 +132,8 @@ final class MapViewModel {
             segments.append(RouteSegment(
                 coordinates: simplified,
                 isGhost: isGhost,
-                ghostlinessScore: score
+                ghostlinessScore: score,
+                startDate: sorted[segmentStartIndex].timestamp
             ))
         }
 
@@ -158,6 +164,16 @@ final class MapViewModel {
             }
         }
         return nil
+    }
+
+    // MARK: - Animation Filtering
+
+    func visibleSegmentsForAnimation(cutoff: Date) -> [RouteSegment] {
+        visibleRoutes.filter { $0.startDate <= cutoff }
+    }
+
+    func visibleGhostsForAnimation(cutoff: Date) -> [GhostLocation] {
+        visibleGhosts.filter { $0.lastVisitAt <= cutoff }
     }
 
     // MARK: - Helpers

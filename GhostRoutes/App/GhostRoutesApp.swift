@@ -3,10 +3,13 @@ import SwiftUI
 @main
 struct GhostRoutesApp: App {
     let appDatabase: AppDatabase
+    let visitManager: VisitManager
 
     init() {
         do {
-            appDatabase = try AppDatabase.makeShared()
+            let db = try AppDatabase.makeShared()
+            appDatabase = db
+            visitManager = VisitManager(database: db)
         } catch {
             fatalError("Database setup failed: \(error)")
         }
@@ -16,6 +19,9 @@ struct GhostRoutesApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.appDatabase, appDatabase)
+                .task { @MainActor in
+                    visitManager.startMonitoring()
+                }
         }
     }
 }
