@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 import GRDB
 
@@ -26,7 +27,9 @@ struct PlaceCache: Codable, Identifiable, Sendable, FetchableRecord, MutablePers
     static let databaseDateEncodingStrategy: DatabaseDateEncodingStrategy = .timeIntervalSince1970
 
     static func makeCacheKey(latitude: Double, longitude: Double) -> String {
-        String(format: "%.4f_%.4f", latitude, longitude)
+        let raw = String(format: "%.4f_%.4f", latitude, longitude)
+        let hash = SHA256.hash(data: Data(raw.utf8))
+        return hash.compactMap { String(format: "%02x", $0) }.joined()
     }
 
     mutating func didInsert(_ inserted: InsertionSuccess) {

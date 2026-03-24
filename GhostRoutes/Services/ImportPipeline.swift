@@ -74,7 +74,7 @@ final class ImportPipeline {
                             try await ghostStore.updateDisplayName(ghostId: ghostId, name: name)
                         }
                     } catch {
-                        Logger.import.warning("Geocoding failed for ghost at \(ghost.clusterLat), \(ghost.clusterLng): \(error)")
+                        Logger.import.warning("Geocoding failed for ghost \(ghost.id ?? 0): \(error)")
                     }
                     state = .geocoding(completed: index + 1, total: total)
                 }

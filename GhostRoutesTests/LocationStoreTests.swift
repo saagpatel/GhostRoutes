@@ -23,8 +23,7 @@ struct LocationStoreTests {
             longitude: -122.4194,
             timestamp: timestamp,
             accuracyMeters: 20.0,
-            source: .takeout,
-            rawJson: #"{"test": true}"#
+            source: .takeout
         )
 
         let inserted = try await store.insert(record)
@@ -37,7 +36,6 @@ struct LocationStoreTests {
         #expect(abs(first.latitude - 37.7749) < 0.0001)
         #expect(abs(first.longitude - (-122.4194)) < 0.0001)
         #expect(first.source == .takeout)
-        #expect(first.rawJson == #"{"test": true}"#)
     }
 
     // MARK: - Batch Insert

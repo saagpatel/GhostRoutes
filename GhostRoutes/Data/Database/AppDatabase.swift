@@ -150,7 +150,7 @@ final class AppDatabase: Sendable {
         // Encrypt at rest when device is locked (real device only)
         #if !targetEnvironment(simulator)
         try fileManager.setAttributes(
-            [.protectionKey: FileProtectionType.completeUnlessOpen],
+            [.protectionKey: FileProtectionType.complete],
             ofItemAtPath: directoryURL.path
         )
         #endif
@@ -158,7 +158,7 @@ final class AppDatabase: Sendable {
         let databasePath = directoryURL.appendingPathComponent("db.sqlite").path
         let pool = try DatabasePool(path: databasePath)
 
-        Logger.database.info("Database opened at \(databasePath)")
+        Logger.database.debug("Database opened successfully")
 
         return try AppDatabase(pool)
     }

@@ -17,9 +17,7 @@ final class VisitManager: NSObject, CLLocationManagerDelegate {
 
     func startMonitoring() {
         guard !isMonitoring else { return }
-        guard locationManager.authorizationStatus == .authorizedAlways
-            || locationManager.authorizationStatus == .authorizedWhenInUse
-        else {
+        guard locationManager.authorizationStatus == .authorizedAlways else {
             Logger.visitManager.warning("Skipping visit monitoring: not authorized")
             return
         }

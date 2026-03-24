@@ -8,7 +8,6 @@ struct LocationRecord: Codable, Identifiable, Sendable, FetchableRecord, Mutable
     var timestamp: Date
     var accuracyMeters: Double?
     var source: DataSource
-    var rawJson: String?
     var createdAt: Date?
 
     enum DataSource: String, Codable, Sendable, DatabaseValueConvertible {
@@ -25,7 +24,6 @@ struct LocationRecord: Codable, Identifiable, Sendable, FetchableRecord, Mutable
         case timestamp
         case accuracyMeters = "accuracy_meters"
         case source
-        case rawJson = "raw_json"
         case createdAt = "created_at"
     }
 
