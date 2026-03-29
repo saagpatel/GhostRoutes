@@ -1,91 +1,50 @@
-![Swift](https://img.shields.io/badge/Swift-6.0-orange?logo=swift)
-![iOS](https://img.shields.io/badge/iOS-17.0%2B-blue?logo=apple)
-![Xcode](https://img.shields.io/badge/Xcode-16%2B-blue?logo=xcode)
-![License](https://img.shields.io/badge/license-MIT-green)
-
 # GhostRoutes
 
-GhostRoutes is an iOS app that surfaces the places you used to go but quietly stopped visiting. Import your Google Location History, and the app identifies "ghost locations" — spots where your visit frequency has dropped significantly from its historical peak — and plots them on a map alongside your movement routes.
+[![Swift](https://img.shields.io/badge/Swift-f05138?style=flat-square&logo=swift)](#) [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#)
 
-## What it does
+> The places you used to go — and quietly stopped
 
-- **Ghost detection** — Clusters your location history into visited places, measures peak vs. recent visit frequency, and surfaces locations where activity has fallen below a configurable threshold.
-- **Map visualization** — Renders your full movement history as route polylines, with ghost-adjacent segments highlighted so you can see where the drift happened.
-- **Life chapters** — Detects periods of significant geographic shift (e.g., moving cities) by tracking 30-day centroid windows and flagging transitions where the centroid moves more than 2 km.
-- **Period comparison** — Overlays two user-selected date ranges on a single map in contrasting colors (cyan vs. amber) to compare how your movement patterns changed over time.
-- **Ghost inbox** — Collects dismissed and surfaced ghost alerts for triage.
-- **Export** — Exports ghost and visit data for use outside the app.
+GhostRoutes is a privacy-first iOS app that surfaces locations you've abandoned. Import your Google Location History and the app clusters your visits, measures peak vs. recent frequency, and marks places where activity has dropped significantly as "ghosts" on a map. Everything runs on-device — no backend, no cloud sync.
 
-## Tech stack
+## Features
 
-| Layer | Technology |
-|---|---|
-| Language | Swift 6 (strict concurrency) |
-| UI | SwiftUI + MapKit |
-| Persistence | GRDB (SQLite) |
-| Concurrency | Swift structured concurrency (`async`/`await`, `Task.detached`) |
-| Location import | Google Takeout JSON parser |
-| Geocoding | CoreLocation reverse geocoding |
-| Geometry | Douglas-Peucker polyline simplification, Haversine distance |
+- **Ghost detection** — clusters location history into visited places, compares peak vs. recent visit frequency, surfaces locations below a configurable drift threshold
+- **Route visualization** — renders your full movement history as polylines on MapKit, with ghost-adjacent segments highlighted
+- **Life chapters** — detects periods of geographic shift by tracking 30-day centroid windows, flagging moves greater than 2 km
+- **Period comparison** — overlays two date ranges in contrasting colors (cyan vs. amber) to compare movement patterns
+- **Ghost inbox** — triage panel for dismissed and surfaced ghost alerts
+- **Export** — exports ghost and visit data for use in other tools
+- **All on-device** — Google Takeout JSON parser runs locally; no data leaves the device
 
-## Prerequisites
+## Quick Start
 
-- Xcode 16 or later
+### Prerequisites
+- Xcode 16+
 - iOS 17.0+ device or simulator
-- [XcodeGen](https://github.com/yonaskolb/XcodeGen) — used to generate the `.xcodeproj` from `project.yml`
 
-## Getting started
-
+### Installation
 ```bash
-# Install XcodeGen if needed
-brew install xcodegen
-
-# Clone the repo
-git clone https://github.com/<your-username>/GhostRoutes.git
-cd GhostRoutes
-
-# Generate the Xcode project
-xcodegen generate
-
-# Open in Xcode
+git clone https://github.com/saagpatel/GhostRoutes
 open GhostRoutes.xcodeproj
 ```
 
-Build and run on a simulator or device running iOS 17+. On first launch, tap **Import** and select a `Records.json` file exported from [Google Takeout](https://takeout.google.com) (choose Location History → JSON format).
+### Usage
+Build and run. On first launch, tap **Import** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
 
-## Project structure
+## Tech Stack
 
-```
-GhostRoutes/
-├── App/                  Entry point and root ContentView
-├── Data/
-│   ├── Database/         GRDB schema, LocationStore, GhostStore
-│   ├── Models/           LocationRecord, Visit, GhostLocation, LifeChapter, PlaceCache
-│   └── Parsers/          Google Takeout JSON parser
-├── Features/
-│   ├── Map/              Main map view + MapViewModel
-│   ├── Chapters/         Life chapters timeline
-│   ├── Compare/          Two-period route comparison
-│   ├── Alerts/           Ghost inbox
-│   ├── Onboarding/       Import flow and document picker
-│   └── Settings/         App settings
-├── Services/
-│   ├── GhostDetector     Core ghost scoring algorithm
-│   ├── VisitClusterer    Grid-based visit clustering
-│   ├── ChapterDetector   Geographic chapter boundary detection
-│   ├── ImportPipeline    End-to-end import orchestration
-│   ├── GeocodeManager    Reverse geocoding for ghost locations
-│   └── ExportService     Data export
-└── Utilities/
-    ├── DouglasPeucker    Polyline simplification
-    └── Haversine         Great-circle distance
-GhostRoutesTests/         Unit tests for all core services
-```
+| Layer | Technology |
+|-------|------------|
+| Language | Swift 6 (strict concurrency) |
+| UI | SwiftUI + MapKit |
+| Persistence | GRDB (SQLite) |
+| Concurrency | Swift structured concurrency |
+| Import | Google Takeout JSON parser |
 
-## Screenshot
+## Architecture
 
-> _Screenshot placeholder — run on device and add here._
+The Takeout importer streams the `Records.json` file in chunks, writing raw location points to GRDB in batches of 500. A `ClusteringEngine` actor then runs a DBSCAN-style clustering pass over the data, writing place records and visit events to separate tables. The `GhostDetector` queries rolling frequency windows directly in SQL and surfaces results to SwiftUI via `@Query` macros. The MapKit overlay redraws only the visible time slice using a `MKTileOverlay`-based approach to avoid loading all polyline data at once.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT
