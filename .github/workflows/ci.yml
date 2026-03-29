@@ -1,0 +1,20 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate
+      - name: Test
+        run: |
+          xcodebuild test \
+            -scheme GhostRoutes \
+            -project GhostRoutes.xcodeproj \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
