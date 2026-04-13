@@ -151,3 +151,6 @@ No reviewer account needed. No in-app purchases. The app is entirely free.
 - [ ] Delete All Data flow tested on device — SQLite empty, notifications cancelled, day count resets to 0
 - [ ] Test on iPhone SE (3rd gen) — smallest supported screen, verify no layout overflow
 - [ ] Submit for Review
+
+## Copyright
+© 2026 saagpatel
