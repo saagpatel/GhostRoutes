@@ -1,0 +1,26 @@
+Every place you used to go is still on the map. You just stopped showing up.
+
+Ghost Routes turns your iPhone's location history into a ghost map — a visualization that contrasts the routes and places you actively visit (bright, solid lines) against the ones you've quietly abandoned (translucent, fading traces). That coffee shop you went to every week for two years. The neighborhood you moved away from. The gym you were serious about.
+
+Import your Google Location History or let Ghost Routes accumulate visits quietly in the background using Apple's CLVisit API. Then open the map and see your past staring back at you.
+
+What you get:
+• Ghost map — active routes in cyan, abandoned places fading by time and frequency
+• Google Takeout import — bring in years of location history in minutes
+• Ongoing CLVisit accumulation — your iPhone already knows where you go
+• Ghost detection algorithm — places you visited regularly but haven't been in 90+ days
+• Ghostliness scoring — ranked by how dramatically your visits dropped off
+• Chronological playback — watch your location history animate oldest-first over 45 seconds
+• Two-period comparison view — see how your routes changed between any two time spans
+• Life chapters — automatic detection of major shifts in where you spend your time
+• Ghost alerts — local notifications when a place crosses the ghost threshold
+• Ghost Inbox — your history of detected abandonments, dismissible
+• Place names — reverse geocoded via Apple's on-device CLGeocoder, no third-party APIs
+• Mindful Mode — pause alerts for 30 days when you just need quiet
+• Static PNG export — share a snapshot of your ghost map via the system share sheet
+• One-tap data deletion — everything gone, no confirmation loops
+
+Privacy, for real:
+Location data never leaves your device. No backend. No account. No network egress for your data. The database is encrypted at rest and excluded from iCloud backup by design. The only thing Ghost Routes sends over the network is a reverse geocode request to Apple's infrastructure to name your ghost places.
+
+No subscriptions. No IAP. Free, permanently.
