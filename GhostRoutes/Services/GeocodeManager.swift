@@ -3,7 +3,6 @@ import Foundation
 import os.log
 
 actor GeocodeManager {
-    private let geocoder = CLGeocoder()
     private let ghostStore: GhostStore
     private var lastCallTime: ContinuousClock.Instant?
     private let minInterval: Duration = .milliseconds(1100)
@@ -31,7 +30,7 @@ actor GeocodeManager {
 
         // Geocode
         let location = CLLocation(latitude: latitude, longitude: longitude)
-        let placemarks = try await geocoder.reverseGeocodeLocation(location)
+        let placemarks = try await CLGeocoder().reverseGeocodeLocation(location)
         let name = placemarks.first?.name
             ?? placemarks.first?.locality
             ?? "Near \(String(format: "%.4f", latitude))°N"
