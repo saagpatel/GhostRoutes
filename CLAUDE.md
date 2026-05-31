@@ -1,9 +1,8 @@
 # Ghost Routes
 
-## Overview
-A privacy-first iOS app that ingests Apple CLVisit API data and Google Location History (Takeout) JSON to render a "ghost map" — a MapKit visualization contrasting current active routes (bright, solid) against abandoned places and patterns (translucent, fading). All processing is on-device. No backend. No accounts. Free App Store release.
+Privacy-first iOS app that ingests Apple CLVisit API data and Google Location History (Takeout) JSON to render a "ghost map" — MapKit visualization contrasting active routes (bright, solid) against abandoned places (translucent, fading). All processing is on-device. No backend. No accounts. Free App Store release.
 
-## Tech Stack
+## Stack
 - Language: Swift 6 (strict concurrency — `async/await`, `actor`)
 - UI: SwiftUI (iOS 17+ minimum — required for MapKit `MapPolyline` overlay support)
 - Database: SQLite via GRDB.swift 7.x — type-safe ORM, WAL mode, Swift 6 strict concurrency
@@ -12,17 +11,10 @@ A privacy-first iOS app that ingests Apple CLVisit API data and Google Location 
 - Image Export: `MKMapSnapshotter` + `UIGraphicsImageRenderer` (Core Graphics composite, iOS 17+)
 - No third-party analytics, no Firebase, no Mixpanel
 
-## Development Conventions
-- SwiftUI-first; UIKit only where SwiftUI MapKit APIs are insufficient
-- `actor` for all database access (`LocationStore`, `GhostStore`, `GeocodeManager`)
-- `async/await` throughout — no completion handlers
-- File naming: PascalCase for types/files, camelCase for properties
-- Unit tests required for: `TakeoutParser`, `GhostDetector`, clustering algorithm — before any phase advances
-- No network calls except `CLGeocoder` (Apple on-device, iOS 17+)
+## Build / Test / Run
+Build and run in Xcode. On first launch, tap **Import** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
 
-## Current Phase
-**All phases complete (v1.0.0) — App Store ready**
-Phases 0-3 implemented, Phase 4 (App Store Prep) finalized. 40+ tests, 0 warnings, clean build.
+Unit tests required for: `TakeoutParser`, `GhostDetector`, clustering algorithm — before any phase advances.
 
 ## Key Decisions
 | Decision | Choice | Why |
@@ -36,14 +28,17 @@ Phases 0-3 implemented, Phase 4 (App Store Prep) finalized. 40+ tests, 0 warning
 | App name | Ghost Routes | Locked — do not rename |
 | iCloud backup | Excluded (`isExcludedFromBackup = true`) | Location data must never leave device |
 
-## Do NOT
-- Do not add features not in the current phase of IMPLEMENTATION-ROADMAP.md
-- Do not write location data to iCloud, CloudKit, or any network destination — ever
-- Do not use `localStorage`, `UserDefaults`, or flat files for location data — SQLite via GRDB only
-- Do not add third-party SDKs without explicit user approval (no Firebase, Amplitude, Sentry, etc.)
-- Do not implement StoreKit or any IAP — this is a free app, permanently
-- Do not reverse geocode in a tight loop — all CLGeocoder calls must go through `GeocodeManager` actor with 1.1s rate limiting
-- Do not scaffold more than the current phase in one session — build phase by phase, verify before advancing
+## Conventions
+- SwiftUI-first; UIKit only where SwiftUI MapKit APIs are insufficient
+- `actor` for all database access (`LocationStore`, `GhostStore`, `GeocodeManager`)
+- `async/await` throughout — no completion handlers
+- File naming: PascalCase for types/files, camelCase for properties
+
+## Gotchas
+- **Phase discipline:** Implement only the current phase from `IMPLEMENTATION-ROADMAP.md`; verify before advancing.
+- **Location data stays on-device:** Write location data only to SQLite via GRDB — never to iCloud, CloudKit, `UserDefaults`, flat files, or any network destination.
+- **No third-party SDKs** without explicit user approval (no Firebase, Amplitude, Sentry, etc.); no StoreKit / IAP — this app is permanently free.
+- **Reverse geocoding:** All `CLGeocoder` calls must go through `GeocodeManager` actor with 1.1s rate limiting — never in a tight loop.
 
 <!-- portfolio-context:start -->
 # Portfolio Context
