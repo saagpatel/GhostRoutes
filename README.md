@@ -13,7 +13,7 @@ GhostRoutes is a privacy-first iOS app that surfaces locations you've abandoned.
 - **Life chapters** — detects periods of geographic shift by tracking 30-day centroid windows, flagging moves greater than 2 km
 - **Period comparison** — overlays two date ranges in contrasting colors (cyan vs. amber) to compare movement patterns
 - **Ghost inbox** — triage panel for dismissed and surfaced ghost alerts
-- **Export** — exports ghost and visit data for use in other tools
+- **Export** — renders a static PNG snapshot of the ghost map via the share sheet
 - **All on-device** — Google Takeout JSON parser runs locally; no data leaves the device
 
 ## Quick Start
@@ -43,7 +43,7 @@ Build and run. On first launch, tap **Import** to load a Google Takeout `Records
 
 ## Architecture
 
-The Takeout importer streams the `Records.json` file in chunks, writing raw location points to GRDB in batches of 500. A `ClusteringEngine` actor then runs a DBSCAN-style clustering pass over the data, writing place records and visit events to separate tables. The `GhostDetector` queries rolling frequency windows directly in SQL and surfaces results to SwiftUI via `@Query` macros. The MapKit overlay redraws only the visible time slice using a `MKTileOverlay`-based approach to avoid loading all polyline data at once.
+The Takeout importer streams the `Records.json` file in chunks, writing raw location points to GRDB in batches of 500. A `VisitClusterer` struct then runs a temporal-spatial sweep, grouping records within 50 m and 30-minute gaps into `Visit` records. The `GhostDetector` computes rolling frequency windows across these visits and surfaces results via `MapViewModel`. The MapKit layer renders overlays as `MapPolyline` entries inside a SwiftUI `Map`; an `onMapCameraChange` callback prunes which segments are live to avoid rendering the full dataset at once.
 
 ## License
 

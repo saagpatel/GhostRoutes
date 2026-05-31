@@ -4,12 +4,12 @@
 A privacy-first iOS app that ingests Apple CLVisit API data and Google Location History (Takeout) JSON to render a "ghost map" — a MapKit visualization contrasting current active routes (bright, solid) against abandoned places and patterns (translucent, fading). All processing is on-device. No backend. No accounts. Free App Store release.
 
 ## Tech Stack
-- Language: Swift 5.9+ (structured concurrency — `async/await`, `actor`)
+- Language: Swift 6 (strict concurrency — `async/await`, `actor`)
 - UI: SwiftUI (iOS 17+ minimum — required for MapKit `MapPolyline` overlay support)
 - Database: SQLite via GRDB.swift 7.x — type-safe ORM, WAL mode, Swift 6 strict concurrency
 - Maps: MapKit (SwiftUI) — `Map` view with `MapPolyline` overlays
 - Notifications: UserNotifications framework (local only, no push)
-- Image Export: `ImageRenderer` (SwiftUI, iOS 16+)
+- Image Export: `MKMapSnapshotter` + `UIGraphicsImageRenderer` (Core Graphics composite, iOS 17+)
 - No third-party analytics, no Firebase, no Mixpanel
 
 ## Development Conventions
@@ -59,12 +59,12 @@ Phases 0-3 implemented, Phase 4 (App Store Prep) finalized. 40+ tests, 0 warning
 
 ## Stack
 
-- Language: Swift 5.9+ (structured concurrency — `async/await`, `actor`)
+- Language: Swift 6 (strict concurrency — `async/await`, `actor`)
 - UI: SwiftUI (iOS 17+ minimum — required for MapKit `MapPolyline` overlay support)
 - Database: SQLite via GRDB.swift 7.x — type-safe ORM, WAL mode, Swift 6 strict concurrency
 - Maps: MapKit (SwiftUI) — `Map` view with `MapPolyline` overlays
 - Notifications: UserNotifications framework (local only, no push)
-- Image Export: `ImageRenderer` (SwiftUI, iOS 16+)
+- Image Export: `MKMapSnapshotter` + `UIGraphicsImageRenderer` (Core Graphics composite, iOS 17+)
 - No third-party analytics, no Firebase, no Mixpanel
 
 ## How To Run

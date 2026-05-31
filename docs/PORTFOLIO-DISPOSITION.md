@@ -56,8 +56,8 @@ Specifically verified on `origin/main`:
 Ghost Routes is a Swift 6 + SwiftUI + MapKit + GRDB privacy-first
 visualizer for personal Google Takeout location history. The Takeout
 importer streams `Records.json` in chunks, writing raw location
-points to GRDB SQLite in batches of 500. A `ClusteringEngine` actor
-runs a DBSCAN-style pass, producing place records and visit events
+points to GRDB SQLite in batches of 500. A `VisitClusterer` struct
+runs a temporal-spatial sweep, producing place records and visit events
 in separate tables. A `GhostDetector` queries rolling frequency
 windows in SQL to surface places the user has stopped visiting
 (quietly dropped places, abandoned routes — the "ghost" framing).
@@ -232,7 +232,7 @@ methodology rediscovery.
 | Phases shipped | v1.0 App Store ready per memory; release scaffolding confirms on canonical main |
 | Release scaffolding | **`APPSTORE-METADATA.md` + `PRIVACY.md` + fastlane deliver + ExportOptions.plist + Privacy Manifest + DEVELOPMENT_TEAM + `project.yml`** |
 | Distribution channel | **App Store Connect** |
-| Tech distinguisher | Google Takeout streaming import + GRDB SQLite + DBSCAN clustering + MKTileOverlay time-slice + Swift 6 strict concurrency + `@Query` macros (iOS 17+) |
+| Tech distinguisher | Google Takeout streaming import + GRDB SQLite + temporal-spatial clustering + MapPolyline viewport gating + Swift 6 strict concurrency (iOS 17+) |
 | Blocker | App Store Connect submission flow + privacy nutrition label review (operator-only) |
 | Migration state | **No `legacy-origin` remote** — clean |
 | Distinguishing feature | **Third iOS App Store cluster member.** Stabilizes the cluster pattern across three structurally-distinct iOS apps (game / Metal instrument / privacy-first location visualizer). Adds `PRIVACY.md` on canonical main as the first per-app privacy artifact in the cluster. |
