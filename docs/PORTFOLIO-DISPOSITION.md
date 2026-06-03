@@ -61,9 +61,10 @@ runs a temporal-spatial sweep, producing place records and visit events
 in separate tables. A `GhostDetector` queries rolling frequency
 windows in SQL to surface places the user has stopped visiting
 (quietly dropped places, abandoned routes — the "ghost" framing).
-SwiftUI consumes these via `@Query` macros (iOS 17+); the MapKit
-overlay uses a `MKTileOverlay`-style approach to redraw only the
-visible time slice, avoiding the all-polylines-at-once trap. Per
+SwiftUI consumes these via `@State` view models loaded asynchronously
+via `.task`; the MapKit overlay uses `MapPolyline` entries inside a
+SwiftUI `Map` view, with `onMapCameraChange` pruning visible segments
+to avoid the all-overlays-at-once trap. Per
 memory: v1.0 App Store ready. The release commits on canonical main
 confirm: fastlane deliver + Privacy Manifest + DEVELOPMENT_TEAM +
 final icon shipped; only the App Store Connect upload + screenshots +
@@ -174,7 +175,7 @@ exist: ~4-5 hours (privacy nutrition label care drives the timing).
 | Special concern | **Google Takeout format drift.** Google has changed the Takeout location-history format multiple times (Records.json → semanticSegments.json → other variants). The importer is the most likely breakage path; pin/test against known good Takeout snapshots. |
 | Special concern | **GRDB migration safety.** Local DB schema changes on app update need migrations; losing place clusters / visit events on an upgrade would be a category-bug for this app. |
 | Special concern | **MapKit overlay redraw on time-slice scrub.** Performance budget is tight on older devices; verify before submission. |
-| Special concern | **iOS 17+ minimum (because `@Query`).** Confirm minimum-iOS target in xcodeproj matches the Swift 6 / `@Query` reality so older iPad users aren't shown a "device not supported" surprise. |
+| Special concern | **iOS 17+ minimum (required for MapKit `MapPolyline` overlay support).** Confirm minimum-iOS target in xcodeproj matches the Swift 6 / MapKit reality so older iPad users aren't shown a "device not supported" surprise. |
 
 ---
 
