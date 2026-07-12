@@ -47,6 +47,34 @@ struct ImportPipelineTests {
             #expect(Bool(false), "Expected .failed state, got \(pipeline.state)")
         }
     }
+
+    @Test("Reimport replaces Takeout data without deleting CLVisit records")
+    @MainActor
+    func reimportIsIdempotent() async throws {
+        let db = try makeTestDatabase()
+        let pipeline = ImportPipeline()
+        let store = LocationStore(database: db)
+        let liveRecord = LocationRecord(
+            latitude: 37.0,
+            longitude: -122.0,
+            timestamp: .now,
+            accuracyMeters: 10,
+            source: .clvisit
+        )
+        _ = try await store.insert(liveRecord)
+
+        let bundle = Bundle(for: BundleToken.self)
+        guard let url = bundle.url(forResource: "takeout_v2", withExtension: "json") else {
+            throw TestError.missingFixture
+        }
+
+        await pipeline.importFile(url: url, database: db)
+        await pipeline.importFile(url: url, database: db)
+
+        let records = try await store.fetchAllRecords()
+        #expect(records.filter { $0.source == .takeout }.count == 100)
+        #expect(records.filter { $0.source == .clvisit }.count == 1)
+    }
 }
 
 private final class BundleToken {}

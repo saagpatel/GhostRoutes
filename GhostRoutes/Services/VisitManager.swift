@@ -65,6 +65,17 @@ final class VisitManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
+        Task { @MainActor in
+            if status == .authorizedAlways {
+                self.startMonitoring()
+            } else if self.isMonitoring {
+                self.stopMonitoring()
+            }
+        }
+    }
+
     // MARK: - Persistence
 
     private func persistVisit(record: LocationRecord, visit: Visit) async {
@@ -73,9 +84,7 @@ final class VisitManager: NSObject, CLLocationManagerDelegate {
             _ = try await locationStore.insert(record)
             _ = try await locationStore.insertVisit(visit)
             lastVisitDate = visit.arrivedAt
-            Logger.visitManager.info(
-                "Saved CLVisit at \(record.latitude), \(record.longitude) (\(visit.durationSeconds)s)"
-            )
+            Logger.visitManager.info("Saved CLVisit (\(visit.durationSeconds)s)")
         } catch {
             Logger.visitManager.error("Failed to persist CLVisit: \(error)")
         }

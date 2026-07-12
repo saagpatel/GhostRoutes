@@ -21,6 +21,6 @@ What you get:
 • One-tap data deletion — everything gone, no confirmation loops
 
 Privacy, for real:
-Location data never leaves your device. No backend. No account. No network egress for your data. The database is encrypted at rest and excluded from iCloud backup by design. The only thing Ghost Routes sends over the network is a reverse geocode request to Apple's infrastructure to name your ghost places.
+Location history and analysis stay on your device. No backend. No account. The database uses iOS Data Protection at rest and is excluded from iCloud backup by design. The only location-related network request is Apple reverse geocoding to name ghost places.
 
 No subscriptions. No IAP. Free, permanently.

@@ -60,7 +60,7 @@ struct SettingsView: View {
                 // MARK: - About
                 Section("About") {
                     LabeledContent("Version", value: "1.0")
-                    Text("Ghost Routes keeps all data on-device. No data is ever sent to any server.")
+                    Text("Your history and analysis stay on-device. Apple reverse geocoding is used to name places.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -72,7 +72,10 @@ struct SettingsView: View {
                     showImportProgress = true
                     guard let db = appDatabase else { return }
                     Task {
-                        guard url.startAccessingSecurityScopedResource() else { return }
+                        guard url.startAccessingSecurityScopedResource() else {
+                            importPipeline.fail("Ghost Routes could not access the selected file. Choose it again from Files.")
+                            return
+                        }
                         defer { url.stopAccessingSecurityScopedResource() }
                         await importPipeline.importFile(url: url, database: db)
                         await refreshCounts()

@@ -51,7 +51,7 @@ Import your Google Location History or let Ghost Routes accumulate visits quietl
 • One-tap data deletion — everything gone, no confirmation loops
 
 **Privacy, for real:**
-Location data never leaves your device. No backend. No account. No network egress for your data. The database is encrypted at rest and excluded from iCloud backup by design. The only thing Ghost Routes sends over the network is a reverse geocode request to Apple's infrastructure to name your ghost places.
+Location history and analysis stay on your device. No backend. No account. The database uses iOS Data Protection at rest and is excluded from iCloud backup by design. The only location-related network request is Apple reverse geocoding to name ghost places.
 
 No subscriptions. No IAP. Free, permanently.
 
@@ -108,9 +108,9 @@ https://github.com/saagpatel/GhostRoutes/blob/main/PRIVACY.md
 ## App Review Notes
 
 ```
-Ghost Routes is a privacy-first location history visualizer. No login, no network access for user data,
+Ghost Routes is a privacy-first location history visualizer. No login or developer-operated backend;
 no special entitlements beyond location (CLVisit, "Always" or "When In Use") and local notifications.
-All location data is stored on-device in an encrypted SQLite database excluded from iCloud backup.
+Location history is stored in a SQLite database protected by iOS Data Protection and excluded from iCloud backup. Apple reverse geocoding may receive coordinates to name places.
 
 The app has two data sources:
 1. CLVisit API — accumulates visits passively in the background (requires location permission)
@@ -136,9 +136,8 @@ No reviewer account needed. No in-app purchases. The app is entirely free.
 
 - [ ] Bundle ID `com.ghostroutes.app` registered in Apple Developer portal
 - [ ] App icon 1024×1024 appears correctly in Xcode asset catalog (no warnings)
-- [ ] `PrivacyInfo.xcprivacy` present in bundle — declares Location API, `NSPrivacyTracking = false`
+- [x] `PrivacyInfo.xcprivacy` present in bundle — declares required-reason file timestamp access and `NSPrivacyTracking = false`
 - [ ] `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationWhenInUseUsageDescription` in Info.plist with plain-English strings
-- [ ] `NSUserNotificationsUsageDescription` in Info.plist (for ghost alerts)
 - [ ] Archive succeeds: `Product → Archive` with no errors
 - [ ] Validate App passes with 0 errors (entitlement check, privacy manifest)
 - [ ] All 8 screenshots uploaded (4 per required size)

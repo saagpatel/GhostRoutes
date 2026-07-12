@@ -50,7 +50,10 @@ struct OnboardingView: View {
                 currentStep = 3
                 Task {
                     // Copy file data before security scope ends
-                    guard url.startAccessingSecurityScopedResource() else { return }
+                    guard url.startAccessingSecurityScopedResource() else {
+                        importPipeline.fail("Ghost Routes could not access the selected file. Choose it again from Files.")
+                        return
+                    }
                     defer { url.stopAccessingSecurityScopedResource() }
                     await importPipeline.importFile(url: url, database: db)
                 }

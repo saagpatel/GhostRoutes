@@ -115,7 +115,11 @@ v1.0 feature set. `ExportOptions.plist` and `fastlane/` scaffolding confirmed pr
 
 ---
 
-## Contradictions for Manual Review
+## Resolved Contradictions
+
+The release-hardening pass replaced the stale SwiftPM Makefile commands with
+XcodeGen and `xcodebuild` workflows. The original finding remains below as
+historical reconciliation evidence.
 
 These are in files outside the editable set. A human should apply the corrections below.
 
