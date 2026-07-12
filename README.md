@@ -25,8 +25,11 @@ GhostRoutes is a privacy-first iOS app that surfaces locations you've abandoned.
 ### Installation
 ```bash
 git clone https://github.com/saagpatel/GhostRoutes
+xcodegen generate
 open GhostRoutes.xcodeproj
 ```
+
+Run `make build` and `make test` for command-line verification.
 
 ### Usage
 Build and run. On first launch, tap **Import** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.

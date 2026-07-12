@@ -18,6 +18,10 @@ final class ImportPipeline {
 
     private(set) var state: State = .idle
 
+    func fail(_ message: String) {
+        state = .failed(message)
+    }
+
     func importFile(url: URL, database: AppDatabase) async {
         let locationStore = LocationStore(database: database)
         let ghostStore = GhostStore(database: database)
@@ -33,8 +37,8 @@ final class ImportPipeline {
 
             // 2. Insert records in chunks with progress
             state = .insertingRecords(progress: 0)
-            try await locationStore.insertBatchChunked(
-                parseResult.records,
+            try await locationStore.replaceTakeoutRecords(
+                with: parseResult.records,
                 chunkSize: 500
             ) { [weak self] progress in
                 Task { @MainActor in
@@ -48,7 +52,7 @@ final class ImportPipeline {
                 VisitClusterer.cluster(parseResult.records)
             }.value
 
-            try await locationStore.insertVisitBatch(visits)
+            try await locationStore.replaceTakeoutVisits(with: visits)
 
             // 4. Detect ghosts
             state = .detectingGhosts

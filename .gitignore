@@ -3,6 +3,7 @@
 *.xcworkspace/
 xcuserdata/
 DerivedData/
+.derivedData/
 build/
 *.pbxuser
 !default.pbxuser
@@ -22,6 +23,11 @@ build/
 .build/
 .swiftpm/
 Package.resolved
+fastlane/report.xml
+*.p8
+**/private_keys/
+.env
+.env.*
 
 # macOS
 .DS_Store

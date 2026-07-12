@@ -121,6 +121,38 @@ actor LocationStore {
         Logger.database.info("Chunked insert: \(total) records in \(total / chunkSize + 1) chunks")
     }
 
+    /// Replaces the previous Google Takeout snapshot while preserving passive
+    /// CLVisit data. A full Takeout export is a snapshot, not an append-only feed.
+    func replaceTakeoutRecords(
+        with records: [LocationRecord],
+        chunkSize: Int = 500,
+        onProgress: @Sendable (Double) -> Void
+    ) async throws {
+        try await database.writer.write { db in
+            _ = try LocationRecord
+                .filter(LocationRecord.Columns.source == LocationRecord.DataSource.takeout)
+                .deleteAll(db)
+
+            for (index, var record) in records.enumerated() {
+                try record.insert(db)
+                if (index + 1).isMultiple(of: chunkSize) || index + 1 == records.count {
+                    onProgress(Double(index + 1) / Double(max(records.count, 1)))
+                }
+            }
+        }
+    }
+
+    func replaceTakeoutVisits(with visits: [Visit]) async throws {
+        try await database.writer.write { db in
+            _ = try Visit
+                .filter(Visit.Columns.source == LocationRecord.DataSource.takeout)
+                .deleteAll(db)
+            for var visit in visits {
+                try visit.insert(db)
+            }
+        }
+    }
+
     // MARK: - Deletion
 
     func deleteAllRecords() async throws {
