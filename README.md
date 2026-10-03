@@ -8,13 +8,13 @@ GhostRoutes is a privacy-first iOS app that surfaces locations you've abandoned.
 
 ## Features
 
-- **Ghost detection** — clusters location history into visited places, compares peak vs. recent visit frequency, surfaces locations below a configurable drift threshold
+- **Ghost detection** — clusters location history into visited places, compares peak vs. recent visit frequency, surfaces locations below the `GhostThresholds.ghostThresholdRatio` constant
 - **Route visualization** — renders your full movement history as polylines on MapKit, with ghost-adjacent segments highlighted
 - **Life chapters** — detects periods of geographic shift by tracking 30-day centroid windows, flagging moves greater than 2 km
 - **Period comparison** — overlays two date ranges in contrasting colors (cyan vs. amber) to compare movement patterns
-- **Ghost inbox** — triage panel for dismissed and surfaced ghost alerts
-- **Export** — renders a static PNG snapshot of the ghost map via the share sheet
-- **All on-device** — Google Takeout JSON parser runs locally; no data leaves the device
+- **Ghost inbox** — triage panel for undismissed ghost locations, with a dismiss action
+- **Export** — renders a static `UIImage` snapshot of the ghost map via the share sheet
+- **All on-device** — Google Takeout parsing and analysis run locally; Apple reverse geocoding names places, and map images can be shared
 
 ## Quick Start
 
@@ -56,7 +56,7 @@ simulator using `GhostRoutesTests/Fixtures` or synthetic visits, rather than per
 Takeout data. A browser cannot validate this native SwiftUI flow.
 
 ### Usage
-Build and run. On first launch, tap **Import** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
+Build and run. On first launch, proceed through onboarding and tap **Choose Takeout JSON File** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
 
 ## Tech Stack
 
@@ -70,7 +70,7 @@ Build and run. On first launch, tap **Import** to load a Google Takeout `Records
 
 ## Architecture
 
-The Takeout importer streams the `Records.json` file in chunks, writing raw location points to GRDB in batches of 500. A `VisitClusterer` struct then runs a temporal-spatial sweep, grouping records within 50 m and 30-minute gaps into `Visit` records. The `GhostDetector` computes rolling frequency windows across these visits and surfaces results via `MapViewModel`. The MapKit layer renders overlays as `MapPolyline` entries inside a SwiftUI `Map`; an `onMapCameraChange` callback prunes which segments are live to avoid rendering the full dataset at once.
+The Takeout importer reads and decodes the whole `Records.json` file in memory, replacing prior Takeout location points in GRDB in one transaction with progress reported every 500 records (and at completion). A `VisitClusterer` struct then runs a temporal-spatial sweep, grouping records within 50 m and 30-minute gaps into `Visit` records. The `GhostDetector` computes rolling frequency windows across these visits and surfaces results via `MapViewModel`. The MapKit layer renders overlays as `MapPolyline` entries inside a SwiftUI `Map`; an `onMapCameraChange` callback prunes which segments are live to avoid rendering the full dataset at once.
 
 ## License
 
