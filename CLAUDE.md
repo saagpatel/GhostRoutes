@@ -12,7 +12,7 @@ Privacy-first iOS app that ingests Apple CLVisit API data and Google Location Hi
 - No third-party analytics, no Firebase, no Mixpanel
 
 ## Build / Test / Run
-Build and run in Xcode. On first launch, tap **Import** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
+Build and run in Xcode. On first launch, proceed through onboarding and tap **Choose Takeout JSON File** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
 
 Unit tests required for: `TakeoutParser`, `GhostDetector`, clustering algorithm — before any phase advances.
 
@@ -21,16 +21,16 @@ Unit tests required for: `TakeoutParser`, `GhostDetector`, clustering algorithm 
 |----------|--------|-----|
 | Data sources | CLVisit (ongoing) + Google Takeout JSON import | Richest dataset; covers history + future accumulation |
 | Monetization | Free, no IAP | Portfolio project; eliminates StoreKit complexity |
-| Minimum ghost threshold | 90 days of location history | Below this, clustering produces false ghosts |
+| Minimum ghost threshold | 90 days since earliest visit | Below this, detection produces false ghosts; `GhostDetector` gates on history age |
 | Ghost detection ratio | current < 20% of peak frequency = ghost | 3-month rolling window; `GhostThresholds` constants are tunable |
 | Place naming | CLGeocoder → locality fallback | Rate-limit safe at 1.1s queue intervals; no third-party APIs |
-| Share format | Static PNG via `ShareLink` only | Video export deferred to v2 |
+| Share format | Static `UIImage` via `UIActivityViewController` | Video export deferred to v2 |
 | App name | Ghost Routes | Locked — do not rename |
 | iCloud backup | Excluded (`isExcludedFromBackup = true`) | Location data must never leave device |
 
 ## Conventions
 - SwiftUI-first; UIKit only where SwiftUI MapKit APIs are insufficient
-- `actor` for all database access (`LocationStore`, `GhostStore`, `GeocodeManager`)
+- `actor` stores (`LocationStore`, `GhostStore`) and geocoding (`GeocodeManager`); shared `AppDatabase` is a `Sendable` class
 - `async/await` throughout — no completion handlers
 - File naming: PascalCase for types/files, camelCase for properties
 
@@ -64,7 +64,7 @@ Phases 0-3 implemented, Phase 4 (App Store Prep) finalized. 40+ tests, 0 warning
 
 ## How To Run
 
-Build and run. On first launch, tap **Import** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
+Build and run. On first launch, proceed through onboarding and tap **Choose Takeout JSON File** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
 
 ## Known Risks
 
