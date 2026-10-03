@@ -19,17 +19,41 @@ GhostRoutes is a privacy-first iOS app that surfaces locations you've abandoned.
 ## Quick Start
 
 ### Prerequisites
-- Xcode 16+
-- iOS 17.0+ device or simulator
+- macOS with full Xcode 16+ selected as the active developer directory (Command Line Tools alone cannot build iOS)
+- XcodeGen on PATH (`brew install xcodegen` if it is not installed)
+- An available iOS 17.0+ simulator; a device is only needed for device-specific checks
 
 ### Installation
 ```bash
 git clone https://github.com/saagpatel/GhostRoutes
+cd GhostRoutes
 xcodegen generate
 open GhostRoutes.xcodeproj
 ```
 
-Run `make build` and `make test` for command-line verification.
+From this repository root, `make build` and `make test` generate the project and
+run unsigned iOS Simulator build/tests. `make test` selects the first available
+iPhone simulator and fails if none exists. Swift package resolution may download
+GRDB; no location-history import is required for these fixture tests.
+
+For a focused suite, generate the project and use an available simulator UUID:
+
+```sh
+make generate
+xcrun simctl list devices available
+# Replace SIMULATOR_UUID with an available iPhone simulator from the list.
+xcodebuild test -project GhostRoutes.xcodeproj -scheme GhostRoutes \
+  -destination 'platform=iOS Simulator,id=SIMULATOR_UUID' \
+  -only-testing:GhostRoutesTests/GhostDetectorTests CODE_SIGNING_ALLOWED=NO
+```
+
+CI additionally builds the Release simulator configuration and runs `plutil -lint`
+on `GhostRoutes/Resources/PrivacyInfo.xcprivacy` and `ExportOptions.plist`.
+No separate Swift lint/formatter command is configured. Archive/App Store export
+Makefile targets require signing/provisioning and are not local verification.
+For changed map/import/export UI, inspect the affected flow in a disposable
+simulator using `GhostRoutesTests/Fixtures` or synthetic visits, rather than personal
+Takeout data. A browser cannot validate this native SwiftUI flow.
 
 ### Usage
 Build and run. On first launch, tap **Import** to load a Google Takeout `Records.json` file. Location permission is requested for ongoing `CLVisit` monitoring.
