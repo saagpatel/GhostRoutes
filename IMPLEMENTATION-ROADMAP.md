@@ -394,7 +394,7 @@ actor GeocodeManager {
 **Objective:** Xcode project scaffolded with GRDB, all 5 tables created via migrations, TakeoutParser handling both JSON schemas, GhostDetector algorithm implemented and unit tested. No UI built in this phase.
 
 **Tasks:**
-1. Create Xcode project `GhostRoutes`, iOS 17+ deployment target, SwiftUI lifecycle, Bundle ID `com.{yourname}.ghostroutes` — **Acceptance:** Project builds clean with 0 warnings on M4 Pro simulator (iPhone 15 Pro)
+1. Create Xcode project `GhostRoutes`, iOS 17+ deployment target, SwiftUI lifecycle, Bundle ID `com.ghostroutes.app` — **Acceptance:** Project builds clean with 0 warnings on M4 Pro simulator (iPhone 15 Pro)
 2. Add GRDB.swift 6.x via SPM (`https://github.com/groue/GRDB.swift`, Up to Next Major from 6.0.0) — **Acceptance:** `import GRDB` compiles without errors in `AppDatabase.swift`
 3. Implement `AppDatabase.swift` with `DatabasePool` and all 5 table migrations (`location_records`, `visits`, `ghost_locations`, `place_cache`, `life_chapters`) — **Acceptance:** Run app on simulator, open Terminal: `sqlite3 ~/Library/Developer/CoreSimulator/Devices/{UUID}/data/Containers/Data/Application/{UUID}/Library/Application\ Support/GhostRoutes/db.sqlite ".tables"` → prints all 5 table names
 4. Implement `LocationStore.swift` as an `actor` with insert/fetch methods for `LocationRecord` and `Visit` — **Acceptance:** Unit test inserts 100 `LocationRecord`s and reads them back; count matches; timestamps round-trip correctly
