@@ -5,6 +5,7 @@ xcuserdata/
 DerivedData/
 .derivedData/
 build/
+dist-receipts/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
