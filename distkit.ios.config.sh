@@ -11,7 +11,8 @@ DK_SCHEME="GhostRoutes"
 DK_XCODE_PROJECT="GhostRoutes.xcodeproj"
 DK_GENERATE_CMD="xcodegen generate"
 DK_EXPORT_OPTIONS="$DK_PROJECT_DIR/ExportOptions.plist"
-DK_IOS_SIGN_STYLE="manual"
+# Signing comes from per-target Release settings in project.yml.
+DK_IOS_SIGN_STYLE="project"
 DK_SIGNING_IDENTITY="Apple Distribution"
 DK_PROFILE_NAME="GhostRoutes App Store"
 DK_REQUIRE_PRIVACY_MANIFEST=1
